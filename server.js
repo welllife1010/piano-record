@@ -32,6 +32,7 @@ app.get("/songs/:id", async (req, res) => {
   } catch (e) {
     song = undefined
   }
+  // make song available in index
   res.render("index", { song: song })
 })
 
