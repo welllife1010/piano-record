@@ -2,9 +2,21 @@ const WHITE_KEYS = ["z", "x", "c", "v", "b", "n", "m"]
 const BLACK_KEYS = ["s", "d", "g", "h", "j"]
 
 const recordButton = document.querySelector(".record-button")
+const playButton = document.querySelector(".play-button")
+const saveButton = document.querySelector(".save-button")
 const keys = document.querySelectorAll(".key")
 const whiteKeys = document.querySelectorAll(".key.white")
 const blackKeys = document.querySelectorAll(".key.black")
+
+// convert note to key(element)
+// reduce(callbackFn, initialValue)
+// paramater => accumulator, currentValue, currentIndex
+// { C: key[0], D: key[1] }
+// keyMap[C]
+const keyMap = [...keys].reduce((map, key) => {
+  map[key.dataset.note] = key
+  return map
+}, {})
 
 let recordingStartTime
 let songNotes
@@ -14,6 +26,8 @@ keys.forEach((key) => {
 })
 
 recordButton.addEventListener("click", toggleRecording)
+saveButton.addEventListener("click", saveSong)
+playButton.addEventListener("click", playSong)
 
 document.addEventListener("keydown", (e) => {
   if (e.repeat) return
@@ -41,14 +55,23 @@ function isRecording() {
 function startRecording() {
   recordingStartTime = Date.now()
   songNotes = []
+  playButton.classList.remove("show")
+  saveButton.classList.remove("show")
 }
 
 function stopRecording() {
   playSong()
+  playButton.classList.add("show")
+  saveButton.classList.add("show")
 }
 
 function playSong() {
-  console.log("songNotes", songNotes)
+  if (songNotes.length === 0) return
+  songNotes.forEach((note) => {
+    setTimeout(() => {
+      playNote(keyMap[note.key])
+    }, note.startTime)
+  })
 }
 
 function playNote(key) {
@@ -68,3 +91,5 @@ function recordNote(note) {
     startTime: Date.now() - recordingStartTime,
   })
 }
+
+function saveSong() {}
